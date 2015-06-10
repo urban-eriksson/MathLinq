@@ -5,37 +5,23 @@ using System.Text;
 
 namespace MathLinq
 {
+    /// <summary>
+    /// Extra methods that are not part of the standard library, but can be useful sometimes.
+    /// </summary>
     public static class Extras
     {
 
-       // Repeat,Sum
 
         /// <summary>
-        /// Generates a sequence that contains one repeated value.
+        /// Generates a sequence of sequences (beta testing).
         /// </summary>
-        /// <param name="element">
-        /// The value to be repeated.
-        /// </param>
-        /// <param name="count">
-        /// The number of times to repeat the value in the generated sequence.
-        /// </param>
-        /// <typeparam name="TResult">
-        /// The type of the value to be repeated in the result sequence.
-        /// </typeparam>
-        /// <returns>
-        /// A sequence that contains a repeated value.
-        /// </returns>
-        /// <exception cref="System.ArgumentOutOfRangeException">
-        /// count is less than 0.
-        /// </exception>
+        /// <typeparam name="TSource">The type of the sequenc</typeparam>
+        /// <param name="source">Source of elements</param>
+        /// <param name="count">Number of repetitions</param>
+        /// <returns>A sequence of sequences</returns>
         public static MathEnumerable<MathEnumerable<TSource>> Repeat<TSource>(this MathEnumerable<TSource> source, int count)
         {
             return MathEnumerable.Repeat<MathEnumerable<TSource>>(source, count);
-        }
-
-        public static MathEnumerable<TSource> Sum<TSource>(this MathEnumerable<MathEnumerable<TSource>> source)
-        {
-            return source.Aggregate((running, next) => running + next);
         }
 
 
@@ -66,7 +52,7 @@ namespace MathLinq
         #region Find variants
 
         /// <summary>
-        /// Finds the index of all elements of a bool sequence corresponding to a true.
+        /// Finds the indices of all elements of a bool sequence corresponding to a true.
         /// </summary>
         /// <param name="boolSource">
         /// A sequence determining which indexes to return.
@@ -105,20 +91,16 @@ namespace MathLinq
 
 
         /// <summary>
-        /// Finds the index of all elements of a bool sequence corresponding to a true.
+        /// Finds the indices of all elements equal to a specific value.
         /// </summary>
-        /// <param name="boolSource">
-        /// A sequence determining which indexes to return.
-        /// </param>
-        /// <returns>
-        /// All elements of a sequence that correspond to a true of boolSource
-        /// </returns>
+        /// <typeparam name="TSource">The type of elements in source.</typeparam>
+        /// <param name="source">The sequence of elements.</param>
+        /// <param name="value">The value that is compared to.</param>
+        /// <returns>The indices of equal values.</returns>
         public static MathEnumerable<int> Find<TSource>(this MathEnumerable<TSource> source, TSource value)
         {
             return (source == value).Find();
         }
-
-
 
         #endregion
 
@@ -231,6 +213,20 @@ namespace MathLinq
         }
 
         #endregion
+
+        /// <summary>
+        /// Replaces elements that satisfy a certain condition with a fix value.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the source of elements.</typeparam>
+        /// <param name="source">The source of elements.</param>
+        /// <param name="selector">The condition.</param>
+        /// <param name="replacementElement">The replacement value.</param>
+        /// <returns>The sequence with replaced values.</returns>
+        public static MathEnumerable<TSource> Replace<TSource>(this MathEnumerable<TSource> source, IEnumerable<bool> selector, TSource replacementElement)
+        {
+            return source.Zip(selector, (s, b) => new { s, b }).Select(a => a.b ? replacementElement : a.s);
+        }
+
 
     }
 }

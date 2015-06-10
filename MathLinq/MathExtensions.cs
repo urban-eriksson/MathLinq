@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Numerics;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -10,7 +9,7 @@ namespace MathLinq
 {
     /// <summary>
     /// Provides a set of extension methods that wraps built-in mathematical methods 
-    /// so they can be used by the MathEnumerable&lt;T&gt; and MathArray&lt;T&gt; classes.
+    /// so they can be used by the MathEnumerable&lt;T&gt; class.
     /// </summary>
     public static class MathExtensions
     {
@@ -90,11 +89,12 @@ namespace MathLinq
             return source.Select(d => Math.Atan(d));
         }
 
-        ///// <summary>
-        ///// Returns the four quadrant arctangent of each element of a sequence of double-precision numbers.
-        ///// </summary>
-        ///// <param name="source">A sequence of double-precision numbers representing the sine. </param>
-        ///// <returns>The sequence of angles in radians.</returns>
+        /// <summary>
+        /// Returns the four quadrant arctangent of each element of a sequence of double-precision numbers.
+        /// </summary>
+        /// <param name="y">y</param>
+        /// <param name="x">x</param>
+        /// <returns>The sequoence of four quadrant elements.</returns>
         public static MathEnumerable<double> Atan2(this MathEnumerable<double> y, MathEnumerable<double> x)
         {
             return y.Zip(x, (yd, xd) => Math.Atan2(yd, xd));
@@ -589,7 +589,7 @@ namespace MathLinq
         /// Rounds a sequence of doubles to a specified number of fractional digits.
         /// </summary>
         /// <param name="source">A sequence of doubles to be rounded.</param>
-        /// <param name="decimals">The number of decimal places in the return value.</param>
+        /// <param name="digits">The number of decimal places in the return value.</param>
         /// <returns>The numbers nearest to source that contains a number of fractional digits equal
         /// to decimals.</returns>
         public static MathEnumerable<double> Round(this MathEnumerable<double> source, int digits)
@@ -630,7 +630,7 @@ namespace MathLinq
         /// specifies how to round the value if it is midway between two other numbers.
         /// </summary>
         /// <param name="source">A sequence of doubles to be rounded.</param>
-        /// <param name="decimals">The number of decimal places in the return value.</param>
+        /// <param name="digits">The number of decimal places in the return value.</param>
         /// <param name="mode">Specification for how to round a value if it is midway between two other numbers.</param>
         /// <returns>The numbers nearest to source that contains a number of fractional digits equal
         /// to decimals. If the number of fractional digits in d is less than decimals,
@@ -808,16 +808,12 @@ namespace MathLinq
         #region System.Double wrappers
 
         /// <summary>
-        /// Returns a value indicating whether the specified number evaluates to negative
+        ///  Returns a value indicating whether the specified number evaluates to negative
         /// or positive infinity
         /// </summary>
-        /// <param name="d">
-        /// A double-precision floating-point number.
-        /// </param>
-        /// <returns>
-        /// true if d evaluates to System.Double.PositiveInfinity or System.Double.NegativeInfinity;
-        /// otherwise, false.
-        /// </returns>
+        /// <param name="source">The sequence of elements.</param>
+        /// <returns>true if d evaluates to System.Double.PositiveInfinity or System.Double.NegativeInfinity;
+        /// otherwise, false.</returns>
         public static MathEnumerable<bool> IsInfinity(this MathEnumerable<double> source)
         {
             return source.Select(d => double.IsInfinity(d));
@@ -828,9 +824,7 @@ namespace MathLinq
         /// Returns a value indicating whether the specified number evaluates to a value
         /// that is not a number (System.Double.NaN).
         /// </summary>
-        /// <param name="d">
-        /// A double-precision floating-point number.
-        /// </param>
+        /// <param name="source">The sequence of elements.</param>
         /// <returns>
         /// true if d evaluates to System.Double.NaN; otherwise, false.
         /// </returns>
@@ -844,9 +838,7 @@ namespace MathLinq
         /// Returns a value indicating whether the specified number evaluates to negative
         /// infinity.
         /// </summary>
-        /// <param name="d">
-        /// A double-precision floating-point number.
-        /// </param>
+        /// <param name="source">The sequence of elements.</param>
         /// <returns>
         /// true if d evaluates to System.Double.NegativeInfinity; otherwise, false.
         /// </returns>
@@ -859,9 +851,7 @@ namespace MathLinq
         /// Returns a value indicating whether the specified number evaluates to positive
         /// infinity.
         /// </summary>
-        /// <param name="d">
-        /// A double-precision floating-point number.
-        /// </param>
+        /// <param name="source">The sequence of elements.</param>
         /// <returns>
         /// true if d evaluates to System.Double.PositiveInfinity; otherwise, false.
         /// </returns>
@@ -872,295 +862,12 @@ namespace MathLinq
 
         #endregion
 
-        #region System.Numerics.Complex wrappers
-
-        /// <summary>
-        /// Gets the absolute value (or magnitude) of a sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The absolute value of source.
-        /// </returns>
-        public static MathEnumerable<double> Abs(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Abs(c));
-        }
-
-        /// <summary>
-        /// Returns the angle that is the arc cosine of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers that represent the cosine.
-        /// </param>
-        /// <returns>
-        /// The angle, measured in radians, which is the arc cosine of value.
-        /// </returns>
-        public static MathEnumerable<Complex> Acos(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Acos(c));
-        }
-
-        /// <summary>
-        /// Returns the angle that is the arc sine of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The angle which is the arc sine of value.
-        /// </returns>
-        public static MathEnumerable<Complex> Asin(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Asin(c));
-        }
-
-        /// <summary>
-        /// Returns the angle that is the arc tangent of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The angle that is the arc tangent of value.
-        /// </returns>
-        public static MathEnumerable<Complex> Atan(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Atan(c));
-        }
-
-        /// <summary>
-        /// Computes the conjugate of a sequence of complex numbers and returns the result.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The conjugate of value.
-        /// </returns>
-        public static MathEnumerable<Complex> Conjugate(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Conjugate(c));
-        }
-
-        /// <summary>
-        /// Returns the cosine of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The cosine of value.
-        /// </returns>
-        public static MathEnumerable<Complex> Cos(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Cos(c));
-        }
-
-        /// <summary>
-        /// Returns the hyperbolic cosine of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The hyperbolic cosine of value.
-        /// </returns>
-        public static MathEnumerable<Complex> Cosh(MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Cosh(c));
-        }
-
-        /// <summary>
-        /// Returns e raised to the power specified by a sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers that specifies a power.
-        /// </param>
-        /// <returns>
-        /// The number e raised to the power value.
-        /// </returns>
-        public static MathEnumerable<Complex> Exp(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Exp(c));
-        }
-
-        /// <summary>
-        /// Creates a sequence of complex numbers from a point's polar coordinates.
-        /// </summary>
-        /// <param name="magnitude">
-        /// The magnitude, which is the distance from the origin (the intersection of
-        /// the x-axis and the y-axis) to the number.
-        /// </param>
-        /// <param name="phase">
-        /// The phase, which is the angle from the line to the horizontal axis, measured
-        /// in radians.
-        /// </param>
-        /// <returns>
-        /// A complex number.
-        /// </returns>
-        public static MathEnumerable<Complex> FromPolarCoordinates(this MathEnumerable<double> magnitude, MathEnumerable<double> phase)
-        {
-            return magnitude.Zip(phase, (m, p) => Complex.FromPolarCoordinates(m, p));
-        }
-
-        /// <summary>
-        /// Returns the natural (base e) logarithm of a specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The natural (base e) logarithm of value.
-        /// </returns>
-        public static MathEnumerable<Complex> Log(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Log(c));
-        }
-
-        /// <summary>
-        /// Returns the logarithm of a specified sequence of complex numbers in a specified base.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <param name="baseValue">
-        /// The base of the logarithm.
-        /// </param>
-        /// <returns>
-        /// The logarithm of value in base baseValue.
-        /// </returns>
-        public static MathEnumerable<Complex> Log(this MathEnumerable<Complex> source, double baseValue)
-        {
-            return source.Select(c => Complex.Log(c, baseValue));
-        }
-
-        /// <summary>
-        /// Returns the base-10 logarithm of a specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The base-10 logarithm of value.
-        /// </returns>
-        public static MathEnumerable<Complex> Log10(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Log10(c));
-        }
-
-        /// <summary>
-        /// Returns a specified complex number raised to a power specified by a sequence of complex numbers
-        /// number.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers to be raised to a power.
-        /// </param>
-        /// <param name="power">
-        /// A complex number that specifies a power.
-        /// </param>
-        /// <returns>
-        /// The sequence of complex numbers raised to the power power.
-        /// </returns>
-        public static MathEnumerable<Complex> Pow(this MathEnumerable<Complex> source, Complex power)
-        {
-            return source.Select(c => Complex.Pow(c, power));
-        }
-
-        /// <summary>
-        /// Returns the multiplicative inverse of a sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The reciprocal of source.
-        /// </returns>
-        public static MathEnumerable<Complex> Reciprocal(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Reciprocal(c));
-        }
-
-        /// <summary>
-        /// Returns the sine of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The sine of source.
-        /// </returns>
-        public static MathEnumerable<Complex> Sin(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Sin(c));
-        }
-
-        /// <summary>
-        /// Returns the hyperbolic sine of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The hyperbolic sine of source.
-        /// </returns>
-        public static MathEnumerable<Complex> Sinh(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Sinh(c));
-        }
-
-        /// <summary>
-        /// Returns the square root of a specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The square root of source.
-        /// </returns>
-        public static MathEnumerable<Complex> Sqrt(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Sinh(c));
-        }
-
-        /// <summary>
-        /// Returns the tangent of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The tangent of source.
-        /// </returns>
-        public static MathEnumerable<Complex> Tan(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Tan(c));
-        }
-
-        /// <summary>
-        /// Returns the hyperbolic tangent of the specified sequence of complex numbers.
-        /// </summary>
-        /// <param name="source">
-        /// A sequence of complex numbers.
-        /// </param>
-        /// <returns>
-        /// The hyperbolic tangent of source.
-        /// </returns>
-        public static MathEnumerable<Complex> Tanh(this MathEnumerable<Complex> source)
-        {
-            return source.Select(c => Complex.Tanh(c));
-        }
-
-
-
-        #endregion
-
         #region Non-system math extension methods
 
         /// <summary>
         /// Raises each element of a sequence to the second power
         /// </summary>
+        /// <typeparam name="T">Type of elements.</typeparam>
         /// <param name="source">A sequence of doubles to be raised to the second power</param>
         /// <returns>The sequence of elements raised to the power of 2</returns>
         public static MathEnumerable<T> Square<T>(this MathEnumerable<T> source)
@@ -1245,7 +952,7 @@ namespace MathLinq
         /// Returns the absolute value of a 32-bit signed integer.
         /// </summary>
         /// <param name="value">
-        /// A number in the range System.Int32.MinValue < value≤System.Int32.MaxValue.
+        /// A number in the range System.Int32.MinValue to value≤System.Int32.MaxValue.
         /// </param>
         /// <returns>
         /// A 32-bit signed integer, x, such that 0 ≤ x ≤System.Int32.MaxValue.
@@ -1262,7 +969,7 @@ namespace MathLinq
         /// Returns the absolute value of a 64-bit signed integer.
         /// </summary>
         /// <param name="value">
-        /// A number in the range System.Int64.MinValue &lt value≤System.Int64.MaxValue.
+        /// A number in the range System.Int64.MinValue to value≤System.Int64.MaxValue.
         /// </param>
         /// <returns>
         /// A 64-bit signed integer, x, such that 0 ≤ x ≤System.Int64.MaxValue.
@@ -1279,7 +986,7 @@ namespace MathLinq
         /// Returns the absolute value of an 8-bit signed integer.
         /// </summary>
         /// <param name="value">
-        /// A number in the range System.SByte.MinValue < value≤System.SByte.MaxValue.
+        /// A number in the range System.SByte.MinValue to value≤System.SByte.MaxValue.
         /// </param>
         /// <returns>
         /// An 8-bit signed integer, x, such that 0 ≤ x ≤System.SByte.MaxValue.
@@ -1296,7 +1003,7 @@ namespace MathLinq
         /// Returns the absolute value of a 16-bit signed integer.
         /// </summary>
         /// <param name="value">
-        /// A number in the range System.Int16.MinValue < value≤System.Int16.MaxValue.
+        /// A number in the range System.Int16.MinValue to value≤System.Int16.MaxValue.
         /// </param>
         /// <returns>
         /// A 16-bit signed integer, x, such that 0 ≤ x ≤System.Int16.MaxValue.
@@ -1317,7 +1024,7 @@ namespace MathLinq
         /// </param>
         /// <returns>
         /// An angle, θ, measured in radians, such that 0 ≤θ≤π-or- System.Double.NaN
-        /// if d < -1 or d > 1.
+        /// if d less than -1 or d greater than 1.
         /// </returns>
         public static double Acos(this double d)
         {
@@ -1332,7 +1039,7 @@ namespace MathLinq
         /// </param>
         /// <returns>
         /// An angle, θ, measured in radians, such that -π/2 ≤θ≤π/2 -or- System.Double.NaN
-        /// if d < -1 or d > 1.
+        /// if d less than -1 or d greater than 1.
         /// </returns>
         public static double Asin(this double d)
         {
@@ -1368,8 +1075,8 @@ namespace MathLinq
         /// <returns>
         /// An angle, θ, measured in radians, such that -π≤θ≤π, and tan(θ) = y / x, where
         /// (x, y) is a point in the Cartesian plane. Observe the following: For (x,
-        /// y) in quadrant 1, 0 &lt θ &lt π/2.For (x, y) in quadrant 2, π/2 &lt θ≤π.For (x,
-        /// y) in quadrant 3, -π &lt θ &lt -π/2.For (x, y) in quadrant 4, -π/2 &lt θ &lt 0.For
+        /// y) in quadrant 1, 0 less than θ &lt; π/2.For (x, y) in quadrant 2, π/2 &lt; θ≤π.For (x,
+        /// y) in quadrant 3, -π &lt; θ &lt; -π/2.For (x, y) in quadrant 4, -π/2 &lt; θ &lt; 0.For
         /// points on the boundaries of the quadrants, the return value is the following:If
         /// y is 0 and x is not negative, θ = 0.If y is 0 and x is negative, θ = π.If
         /// y is positive and x is 0, θ = π/2.If y is negative and x is 0, θ = -π/2.
@@ -1606,11 +1313,11 @@ namespace MathLinq
         /// <returns>
         /// One of the values in the following table. (+Infinity denotes System.Double.PositiveInfinity,
         /// -Infinity denotes System.Double.NegativeInfinity, and NaN denotes System.Double.NaN.)anewBaseReturn
-        /// valuea> 0(0 <newBase< 1) -or-(newBase> 1)lognewBase(a)a< 0(any value)NaN(any
-        /// value)newBase< 0NaNa != 1newBase = 0NaNa != 1newBase = +InfinityNaNa = NaN(any
-        /// value)NaN(any value)newBase = NaNNaN(any value)newBase = 1NaNa = 00 <newBase<
-        /// 1 +Infinitya = 0newBase> 1-Infinitya = +Infinity0 <newBase< 1-Infinitya =
-        /// +InfinitynewBase> 1+Infinitya = 1newBase = 00a = 1newBase = +Infinity0
+        /// valuea> 0(0 &lt; newBase &lt; 1) -or-(newBase &gt; 1)lognewBase(a)a &lt; 0(any value)NaN(any
+        /// value)newBase &lt; 0NaNa != 1newBase = 0NaNa != 1newBase = +InfinityNaNa = NaN(any
+        /// value)NaN(any value)newBase = NaNNaN(any value)newBase = 1NaNa = 00 &lt; newBase &lt;
+        /// 1 +Infinitya = 0newBase> 1-Infinitya = +Infinity0 &lt; newBase &lt; 1-Infinitya =
+        /// +InfinitynewBase &gt; 1+Infinitya = 1newBase = 00a = 1newBase = +Infinity0
         /// </returns>
         public static double Log(this double a, double newBase)
         {
@@ -2527,303 +2234,13 @@ namespace MathLinq
         #region System.Int32 wrappers
 
         /// <summary>
-        /// Converts the value of the specified System.Decimal to the equivalent 32-bit
-        /// signed integer.
+        /// Converts an integer to a double.
         /// </summary>
-        /// <param name="d">
-        /// The System.Decimal value to convert.
-        /// </param>
-        /// <returns>
-        /// A 32-bit signed integer equivalent to the value of d.
-        /// </returns>
-        /// <exception cref="System.OverflowException">
-        /// d is less than System.Int32.MinValue or greater than System.Int32.MaxValue.
-        /// </exception>
+        /// <param name="i">An integer.</param>
+        /// <returns>A double.</returns>
         public static double ToDouble(this int i)
         {
             return (double)i;
-        }
-
-        #endregion
-
-        #region System.Numerics.Complex wrappers
-
-        /// <summary>
-        /// Gets the absolute value (or magnitude) of a complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The absolute value of value.
-        /// </returns>
-        public static double Abs(this Complex value)
-        {
-            return Complex.Abs(value);
-        }
-
-        /// <summary>
-        /// Returns the angle that is the arc cosine of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number that represents a cosine.
-        /// </param>
-        /// <returns>
-        /// The angle, measured in radians, which is the arc cosine of value.
-        /// </returns>
-        public static Complex Acos(this Complex value)
-        {
-            return Complex.Acos(value);
-        }
-
-        /// <summary>
-        /// Returns the angle that is the arc sine of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The angle which is the arc sine of value.
-        /// </returns>
-        public static Complex Asin(this Complex value)
-        {
-            return Complex.Asin(value);
-        }
-
-        /// <summary>
-        /// Returns the angle that is the arc tangent of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The angle that is the arc tangent of value.
-        /// </returns>
-        public static Complex Atan(this Complex value)
-        {
-            return Complex.Atan(value);
-        }
-
-        /// <summary>
-        /// Computes the conjugate of a complex number and returns the result.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The conjugate of value.
-        /// </returns>
-        public static Complex Conjugate(this Complex value)
-        {
-            return Complex.Conjugate(value);
-        }
-
-        /// <summary>
-        /// Returns the cosine of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The cosine of value.
-        /// </returns>
-        public static Complex Cos(this Complex value)
-        {
-            return Complex.Cos(value);
-        }
-
-        /// <summary>
-        /// Returns the hyperbolic cosine of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The hyperbolic cosine of value.
-        /// </returns>
-        public static Complex Cosh(Complex value)
-        {
-            return Complex.Cosh(value);
-        }
-
-        /// <summary>
-        /// Returns e raised to the power specified by a complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number that specifies a power.
-        /// </param>
-        /// <returns>
-        /// The number e raised to the power value.
-        /// </returns>
-        public static Complex Exp(this Complex value)
-        {
-            return Complex.Exp(value);
-        }
-
-        /// <summary>
-        /// Creates a complex number from a point's polar coordinates.
-        /// </summary>
-        /// <param name="magnitude">
-        /// The magnitude, which is the distance from the origin (the intersection of
-        /// the x-axis and the y-axis) to the number.
-        /// </param>
-        /// <param name="phase">
-        /// The phase, which is the angle from the line to the horizontal axis, measured
-        /// in radians.
-        /// </param>
-        /// <returns>
-        /// A complex number.
-        /// </returns>
-        public static Complex FromPolarCoordinates(this double magnitude, double phase)
-        {
-            return Complex.FromPolarCoordinates(magnitude, phase);
-        }
-
-        /// <summary>
-        /// Returns the natural (base e) logarithm of a specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The natural (base e) logarithm of value.
-        /// </returns>
-        public static Complex Log(this Complex value)
-        {
-            return Complex.Log(value);
-        }
-
-        /// <summary>
-        /// Returns the logarithm of a specified complex number in a specified base.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <param name="baseValue">
-        /// The base of the logarithm.
-        /// </param>
-        /// <returns>
-        /// The logarithm of value in base baseValue.
-        /// </returns>
-        public static Complex Log(this Complex value, double baseValue)
-        {
-            return Complex.Log(value, baseValue);
-        }
-
-        /// <summary>
-        /// Returns the base-10 logarithm of a specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The base-10 logarithm of value.
-        /// </returns>
-        public static Complex Log10(this Complex value)
-        {
-            return Complex.Log10(value);
-        }
-
-        /// <summary>
-        /// Returns a specified complex number raised to a power specified by a complex
-        /// number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number to be raised to a power.
-        /// </param>
-        /// <param name="power">
-        /// A complex number that specifies a power.
-        /// </param>
-        /// <returns>
-        /// The complex number value raised to the power power.
-        /// </returns>
-        public static Complex Pow(this Complex value, Complex power)
-        {
-            return Complex.Pow(value, power);
-        }
-
-        /// <summary>
-        /// Returns the multiplicative inverse of a complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The reciprocal of value.
-        /// </returns>
-        public static Complex Reciprocal(this Complex value)
-        {
-            return Complex.Reciprocal(value);
-        }
-
-        /// <summary>
-        /// Returns the sine of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The sine of value.
-        /// </returns>
-        public static Complex Sin(this Complex value)
-        {
-            return Complex.Sin(value);
-        }
-
-        /// <summary>
-        /// Returns the hyperbolic sine of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The hyperbolic sine of value.
-        /// </returns>
-        public static Complex Sinh(this Complex value)
-        {
-            return Complex.Sinh(value);
-        }
-
-        /// <summary>
-        /// Returns the square root of a specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The square root of value.
-        /// </returns>
-        public static Complex Sqrt(this Complex value)
-        {
-            return Complex.Sqrt(value);
-        }
-
-        /// <summary>
-        /// Returns the tangent of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The tangent of value.
-        /// </returns>
-        public static Complex Tan(this Complex value)
-        {
-            return Complex.Tan(value);
-        }
-
-        /// <summary>
-        /// Returns the hyperbolic tangent of the specified complex number.
-        /// </summary>
-        /// <param name="value">
-        /// A complex number.
-        /// </param>
-        /// <returns>
-        /// The hyperbolic tangent of value.
-        /// </returns>
-        public static Complex Tanh(this Complex value)
-        {
-            return Complex.Tanh(value);
         }
 
         #endregion
@@ -2833,8 +2250,8 @@ namespace MathLinq
         /// <summary>
         /// Returns atan hyperbolicus of the double x
         /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
+        /// <param name="x">A double to be taken Atanh of.</param>
+        /// <returns>The double taken Atanh of.</returns>
         public static double Atanh(this double x)
         {
             return ((1 + x).Log() - (1 - x).Log()) / 2;
@@ -2843,9 +2260,9 @@ namespace MathLinq
         /// <summary>
         /// Finds the remainder of division of one number by another
         /// </summary>
-        /// <param name="d"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
+        /// <param name="d">A double to be taken the remainder of.</param>
+        /// <param name="y">The number that is divided with.</param>
+        /// <returns>The remainder.</returns>
         public static double Mod(this double d, double y)
         {
             return d - (d / y).Floor() * y;

@@ -8,48 +8,18 @@ using System.Security;
 using System.Runtime;
 using System.Runtime.ConstrainedExecution;
 using System.Threading;
-using System.Numerics;
+
 
 namespace MathLinq
 {
 
+    /// <summary>
+    /// Class that is wrapping the existing Enumerable operations to yield MathEnumerable objects.
+    /// </summary>
     public static class MathEnumerable
     {
 
         #region Wrapping Enumerable operations to yield a MathEnumerable object
-
-        //
-        // Summary:
-        //     Casts the elements of a MathEnumerable to the specified
-        //     type.
-        //
-        // Parameters:
-        //   source:
-        //     The MathEnumerable that contains the elements to be cast
-        //     to type TResult.
-        //
-        // Type parameters:
-        //   TResult:
-        //     The type to cast the elements of source to.
-        //
-        // Returns:
-        //     A MathEnumerable<T> that contains each element of
-        //     the source sequence cast to the specified type.
-        //
-        // Exceptions:
-        //   System.ArgumentNullException:
-        //     source is null.
-        //
-        //   System.InvalidCastException:
-        //     An element in the sequence cannot be cast to type TResult.
-        public static MathEnumerable<TResult> Crust<TSource, TResult>(this MathEnumerable<TSource> source)
-        {
-            var p1 = Expression.Parameter(typeof(TSource));
-            Func<TSource, TResult> caster = Expression.Lambda<Func<TSource, TResult>>(Expression.Convert(p1, typeof(TResult)), p1).Compile();
-            return source.Select(item => caster(item)).AsMathEnumerable();
-
-            //return System.Linq.Enumerable.Cast<TResult>(source).AsMathEnumerable();
-        }
 
         /// <summary>
         /// Concatenates two sequences.
@@ -150,7 +120,7 @@ namespace MathLinq
         /// The sequence to remove duplicate elements from.
         /// </param>
         /// <param name="comparer">
-        /// An IEqualityComparer<(Of <(T>)>) to compare values.
+        /// An IEqualityComparer{T} to compare values.
         /// </param>
         /// <typeparam name="TSource">
         /// The type of the elements of source.
@@ -217,7 +187,7 @@ namespace MathLinq
         /// those elements to be removed from the returned sequence.
         /// </param>
         /// <param name="comparer">
-        /// An IEqualityComparer<(Of <(T>)>) to compare values.
+        /// An IEqualityComparer{T} to compare values.
         /// </param>
         /// <typeparam name="TSource">
         /// The type of the elements of the input sequences.
@@ -299,7 +269,7 @@ namespace MathLinq
         /// function.
         /// </summary>
         /// <param name="source">
-        /// An OrderedParallelQuery<(Of <(TElement>)>) than contains elements to sort.
+        /// An OrderedParallelQuery{TElement} that contains elements to sort.
         /// </param>
         /// <param name="keySelector">
         /// A function to extract a key from an element.
@@ -410,8 +380,8 @@ namespace MathLinq
         /// A function to extract the key for each element.
         /// </param>
         /// <param name="elementSelector">
-        /// A function to map each source element to an element in an IGrouping<TKey,
-        /// TElement>.
+        /// A function to map each source element to an element in an IGrouping{TKey,
+        /// TElement}.
         /// </param>
         /// <param name="resultSelector">
         /// A function to create a result value from each group.
@@ -467,7 +437,7 @@ namespace MathLinq
         /// The type of the elements in the IGrouping
         /// </typeparam>
         /// <returns>
-        /// An MathEnumerable<IGrouping<TKey, TElement>> where each System.Linq.IGrouping<TKey,TElement>
+        /// An MathEnumerable{IGrouping{TKey, TElement}} where each System.Linq.IGrouping{TKey,TElement}
         /// object contains a collection of objects of type TElement and a key.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">
@@ -594,7 +564,7 @@ namespace MathLinq
         /// and a collection of matching elements from the second sequence.
         /// </param>
         /// <param name="comparer">
-        /// An IEqualityComparer<(Of <(T>)>) to hash and compare keys.
+        /// An IEqualityComparer{T} to hash and compare keys.
         /// </param>
         /// <typeparam name="TOuter">
         /// The type of the elements of the first sequence.
@@ -659,7 +629,7 @@ namespace MathLinq
         /// will be returned.
         /// </param>
         /// <param name="comparer">
-        /// An IEqualityComparer<(Of <(T>)>) to compare values.
+        /// An IEqualityComparer {T} to compare values.
         /// </param>
         /// <typeparam name="TSource">
         /// The type of the elements of the input sequences.
@@ -740,7 +710,7 @@ namespace MathLinq
         /// A function to create a result element from two matching elements.
         /// </param>
         /// <param name="comparer">
-        /// An IEqualityComparer<(Of <(T>)>) to hash and compare keys.
+        /// An IEqualityComparer {T} to hash and compare keys.
         /// </param>
         /// <typeparam name="TOuter">
         /// The type of the elements of the first sequence.
@@ -898,7 +868,7 @@ namespace MathLinq
         /// The number of sequential integers to generate.
         /// </param>
         /// <returns>
-        /// An IEnumerable<Int32> in C# or IEnumerable(Of Int32) in Visual Basic that
+        /// An IEnumerable{Int32} in C# or IEnumerable(Of Int32) in Visual Basic that
         /// contains a range of sequential integral numbers.
         /// </returns>
         /// <exception cref="System.ArgumentOutOfRangeException">
@@ -1336,7 +1306,7 @@ namespace MathLinq
         /// A sequence whose distinct elements form the second set for the union.
         /// </param>
         /// <param name="comparer">
-        /// An IEqualityComparer<(Of <(T>)>) to compare values.
+        /// An IEqualityComparer {T} to compare values.
         /// </param>
         /// <typeparam name="TSource">
         /// The type of the elements of the input sequences.
@@ -1436,6 +1406,41 @@ namespace MathLinq
             return System.Linq.Enumerable.Zip(first, second, resultSelector).AsMathEnumerable();
         }
 
+        /// <summary>
+        /// Merges two sequences by using the specified predicate function.
+        /// </summary>
+        /// <param name="first">
+        /// The first sequence to zip.
+        /// </param>
+        /// <param name="second">
+        /// The second sequence to zip.
+        /// </param>
+        /// <param name="resultSelector">
+        /// A function to create a result element from two matching elements.
+        /// </param>
+        /// <typeparam name="TFirst">
+        /// The type of the elements of the first sequence.
+        /// </typeparam>
+        /// <typeparam name="TSecond">
+        /// The type of the elements of the second sequence.
+        /// </typeparam>
+        /// <typeparam name="TResult">
+        /// The type of the return elements.
+        /// </typeparam>
+        /// <returns>
+        /// A sequence that has elements of type that are obtained by performing resultSelector
+        /// pairwise on two sequences. If the sequence lengths are unequal, this truncates
+        /// to the length of the shorter sequence.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// first or second or resultSelector is a null reference.
+        /// </exception>
+        public static MathEnumerable<TResult> Zip<TFirst, TSecond, TResult>(this MathEnumerable<TFirst> first, IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
+        {
+            return System.Linq.Enumerable.Zip(first, second, resultSelector).AsMathEnumerable();
+        }
+
+
         #endregion
 
 
@@ -1521,21 +1526,10 @@ namespace MathLinq
         /// <summary>
         /// Generates a sequence of numbers from one value to with a specified number of elements.
         /// </summary>
-        /// <typeparam name="T">
-        /// The type of the numbers in the sequence.
-        /// </typeparam>
-        /// <param name="start">
-        /// First number in sequence.
-        /// </param>
-        /// <param name="stop">
-        /// Last number in sequence.
-        /// </param>
-        /// <param name="count">
-        /// Number of elements in the sequence.
-        /// </param>
-        /// <returns>
-        /// A sequence of numbers of type T with arbitrary steps starting and ending at specififed numbers.
-        /// </returns>
+        /// <typeparam name="T">The type of the numbers in the sequence.</typeparam>
+        /// <param name="start">First number in sequence.</param>
+        /// <param name="stop">Last number in sequence.</param>
+        /// <returns>A sequence of numbers of type T with integer steps starting and ending at specififed numbers.</returns>
         public static MathEnumerable<T> LinSpace<T>(T start, T stop)
         {
             int count = 1 + Expression.Lambda<Func<int>>(Expression.Convert(Expression.Subtract(Expression.Constant(stop), Expression.Constant(start)), typeof(int))).Compile().Invoke();
@@ -1665,6 +1659,13 @@ namespace MathLinq
 
         #endregion
 
+        /// <summary>
+        /// Initializes sequnce to arbitrary number of objects.
+        /// </summary>
+        /// <typeparam name="T">Type of sequence.</typeparam>
+        /// <param name="count">Number of elements.</param>
+        /// <param name="instantiator">The constructor or similar for the objects.</param>
+        /// <returns>A sequence of arbitrary objects.</returns>
         public static MathEnumerable<T> Initialize<T>(int count, Func<int,T> instantiator) 
         {
             return MathEnumerable.Range<int>(count).Select(i=>instantiator(i));
@@ -1675,143 +1676,139 @@ namespace MathLinq
 
     }
 
-    public static class MathArrays
-    {
+    ////public static class MathArrays
+    ////{
 
-        /// <summary>
-        /// Replaces selected elements of a sequence by a constant value. 
-        /// </summary>
-        /// <typeparam name="TSource">
-        /// The type of elements of source.
-        /// </typeparam>
-        /// <param name="source">
-        /// A sequence whose elements to replace elements of.
-        /// </param>
-        /// <param name="boolSource">
-        /// A sequence determining which elements to replace.
-        /// </param>
-        /// <param name="newElement">
-        /// The value of the replaced elements.
-        /// </param>
-        /// <returns>
-        /// A sequence of elements where some elements have been replaced by a constant value.
-        /// </returns>
-        //public static MathEnumerable<TSource> Replace<TSource>( this MathEnumerable<TSource> source, Func<TSource,bool> predicate, TSource newElement ) {
-        //  //return source.Select( a => predicate(a) ? newElement : a ).AsMathEnumerable( );
-        //  return source.AsSequential( ).Select( a => predicate( a ) ? newElement : a ).AsMathEnumerable( );
-        //}
-        //public static MathEnumerable<TSource> Replace<TSource>( this MathEnumerable<TSource> source, MathEnumerable<bool> boolSource, TSource newElement ) {
-        //  return source.Zip( boolSource, ( s, b ) => new { s, b } ).Select( a => a.b ? newElement : a.s ).AsMathEnumerable( );
-        //}
-        //public static MathEnumerable<TSource> Replace<TSource>( this MathEnumerable<TSource> source, Func<TSource,bool> predicate, TSource newElement ) {
-        //  //return source.Select( a => predicate(a) ? newElement : a ).AsMathEnumerable( );
-        //  return source.Zip(MathEnumerable.Repeat(newElement), (a,b) => predicate( a ) ? b : a ).AsMathEnumerable( );
-        //}
-        public static MathEnumerable<TSource> Replace<TSource>(this MathEnumerable<TSource> source, Func<TSource, bool> predicate, TSource newElement)
-        {
-            return source.Select(a => predicate(a) ? newElement : a).AsMathEnumerable();
-        }
+    //    /// <summary>
+    //    /// Replaces selected elements of a sequence by a constant value. 
+    //    /// </summary>
+    //    /// <typeparam name="TSource">
+    //    /// The type of elements of source.
+    //    /// </typeparam>
+    //    /// <param name="source">
+    //    /// A sequence whose elements to replace elements of.
+    //    /// </param>
+    //    /// <param name="boolSource">
+    //    /// A sequence determining which elements to replace.
+    //    /// </param>
+    //    /// <param name="newElement">
+    //    /// The value of the replaced elements.
+    //    /// </param>
+    //    /// <returns>
+    //    /// A sequence of elements where some elements have been replaced by a constant value.
+    //    /// </returns>
+    //    //public static MathEnumerable<TSource> Replace<TSource>( this MathEnumerable<TSource> source, Func<TSource,bool> predicate, TSource newElement ) {
+    //    //  //return source.Select( a => predicate(a) ? newElement : a ).AsMathEnumerable( );
+    //    //  return source.AsSequential( ).Select( a => predicate( a ) ? newElement : a ).AsMathEnumerable( );
+    //    //}
+    //    //public static MathEnumerable<TSource> Replace<TSource>( this MathEnumerable<TSource> source, MathEnumerable<bool> boolSource, TSource newElement ) {
+    //    //  return source.Zip( boolSource, ( s, b ) => new { s, b } ).Select( a => a.b ? newElement : a.s ).AsMathEnumerable( );
+    //    //}
+    //    //public static MathEnumerable<TSource> Replace<TSource>( this MathEnumerable<TSource> source, Func<TSource,bool> predicate, TSource newElement ) {
+    //    //  //return source.Select( a => predicate(a) ? newElement : a ).AsMathEnumerable( );
+    //    //  return source.Zip(MathEnumerable.Repeat(newElement), (a,b) => predicate( a ) ? b : a ).AsMathEnumerable( );
+    //    //}
 
 
 
-        //public static T Find<T>(this MathEnumerable<T> source, Func<T, T, bool> preferenceCondition)
-        //{
-        //    return source.Aggregate((agg, a) => preferenceCondition(agg, a) ? a : agg);
-        //}
+    //    //public static T Find<T>(this MathEnumerable<T> source, Func<T, T, bool> preferenceCondition)
+    //    //{
+    //    //    return source.Aggregate((agg, a) => preferenceCondition(agg, a) ? a : agg);
+    //    //}
 
-        //public static T Find<T, TSecond>(this MathEnumerable<T> source, MathEnumerable<TSecond> second, Func<TSecond, TSecond, bool> preferenceCondition)
-        //{
-        //    return source.Zip(second, (s1, s2) => new { s1, s2 }).Aggregate((agg, a) => preferenceCondition(agg.s2, a.s2) ? a : agg).s1;
-        //}
+    //    //public static T Find<T, TSecond>(this MathEnumerable<T> source, MathEnumerable<TSecond> second, Func<TSecond, TSecond, bool> preferenceCondition)
+    //    //{
+    //    //    return source.Zip(second, (s1, s2) => new { s1, s2 }).Aggregate((agg, a) => preferenceCondition(agg.s2, a.s2) ? a : agg).s1;
+    //    //}
 
-        //public static T FindNearest<T>(this MathEnumerable<T> source, T value)
-        //{
-        //    ParameterExpression a = Expression.Parameter(typeof(T));
-        //    ParameterExpression agg = Expression.Parameter(typeof(T));
-        //    var v0 = Expression.Constant(value);
+    //    //public static T FindNearest<T>(this MathEnumerable<T> source, T value)
+    //    //{
+    //    //    ParameterExpression a = Expression.Parameter(typeof(T));
+    //    //    ParameterExpression agg = Expression.Parameter(typeof(T));
+    //    //    var v0 = Expression.Constant(value);
 
-        //    var delta_a = Expression.Subtract(a, v0);
-        //    var delta_agg = Expression.Subtract(agg, v0);
+    //    //    var delta_a = Expression.Subtract(a, v0);
+    //    //    var delta_agg = Expression.Subtract(agg, v0);
 
-        //    var subcond1 = Expression.And(Expression.LessThan(delta_a, delta_agg), Expression.GreaterThan(delta_a, Expression.Negate(delta_agg)));
-        //    var subcond2 = Expression.And(Expression.LessThan(delta_a, Expression.Negate(delta_agg)), Expression.GreaterThan(delta_a, delta_agg));
-        //    var comboexp = Expression.Or(subcond1, subcond2);
+    //    //    var subcond1 = Expression.And(Expression.LessThan(delta_a, delta_agg), Expression.GreaterThan(delta_a, Expression.Negate(delta_agg)));
+    //    //    var subcond2 = Expression.And(Expression.LessThan(delta_a, Expression.Negate(delta_agg)), Expression.GreaterThan(delta_a, delta_agg));
+    //    //    var comboexp = Expression.Or(subcond1, subcond2);
 
-        //    Func<T, T, bool> aggfun = Expression.Lambda<Func<T, T, bool>>(comboexp, agg, a).Compile();
-        //    return source.Find(aggfun);
-        //}
+    //    //    Func<T, T, bool> aggfun = Expression.Lambda<Func<T, T, bool>>(comboexp, agg, a).Compile();
+    //    //    return source.Find(aggfun);
+    //    //}
 
-        //public static T FindNearest<T, TSecond>(this MathEnumerable<T> source, MathEnumerable<TSecond> second, T value)
-        //{
-        //    ParameterExpression a = Expression.Parameter(typeof(TSecond));
-        //    ParameterExpression agg = Expression.Parameter(typeof(TSecond));
-        //    var v0 = Expression.Constant(value);
+    //    //public static T FindNearest<T, TSecond>(this MathEnumerable<T> source, MathEnumerable<TSecond> second, T value)
+    //    //{
+    //    //    ParameterExpression a = Expression.Parameter(typeof(TSecond));
+    //    //    ParameterExpression agg = Expression.Parameter(typeof(TSecond));
+    //    //    var v0 = Expression.Constant(value);
 
-        //    var delta_a = Expression.Subtract(a, v0);
-        //    var delta_agg = Expression.Subtract(agg, v0);
+    //    //    var delta_a = Expression.Subtract(a, v0);
+    //    //    var delta_agg = Expression.Subtract(agg, v0);
 
-        //    var subcond1 = Expression.And(Expression.LessThan(delta_a, delta_agg), Expression.GreaterThan(delta_a, Expression.Negate(delta_agg)));
-        //    var subcond2 = Expression.And(Expression.LessThan(delta_a, Expression.Negate(delta_agg)), Expression.GreaterThan(delta_a, delta_agg));
-        //    var comboexp = Expression.Or(subcond1, subcond2);
+    //    //    var subcond1 = Expression.And(Expression.LessThan(delta_a, delta_agg), Expression.GreaterThan(delta_a, Expression.Negate(delta_agg)));
+    //    //    var subcond2 = Expression.And(Expression.LessThan(delta_a, Expression.Negate(delta_agg)), Expression.GreaterThan(delta_a, delta_agg));
+    //    //    var comboexp = Expression.Or(subcond1, subcond2);
 
-        //    Func<TSecond, TSecond, bool> aggfun = Expression.Lambda<Func<TSecond, TSecond, bool>>(comboexp, agg, a).Compile();
-        //    return source.Find(second, aggfun);
-        //}
+    //    //    Func<TSecond, TSecond, bool> aggfun = Expression.Lambda<Func<TSecond, TSecond, bool>>(comboexp, agg, a).Compile();
+    //    //    return source.Find(second, aggfun);
+    //    //}
 
-        //public static T FindNearest2<T, TSecond>(this MathEnumerable<T> source, MathEnumerable<TSecond> second, T value)
-        //{
-        //    ParameterExpression a = Expression.Parameter(typeof(TSecond));
-        //    ParameterExpression agg = Expression.Parameter(typeof(TSecond));
-        //    var v0 = Expression.Constant(value);
+    //    //public static T FindNearest2<T, TSecond>(this MathEnumerable<T> source, MathEnumerable<TSecond> second, T value)
+    //    //{
+    //    //    ParameterExpression a = Expression.Parameter(typeof(TSecond));
+    //    //    ParameterExpression agg = Expression.Parameter(typeof(TSecond));
+    //    //    var v0 = Expression.Constant(value);
 
-        //    var delta_a = Expression.Subtract(a, v0);
-        //    var delta_agg = Expression.Subtract(agg, v0);
+    //    //    var delta_a = Expression.Subtract(a, v0);
+    //    //    var delta_agg = Expression.Subtract(agg, v0);
 
-        //    var subcond1 = Expression.And(Expression.LessThan(delta_a, delta_agg), Expression.GreaterThan(delta_a, Expression.Negate(delta_agg)));
-        //    var subcond2 = Expression.And(Expression.LessThan(delta_a, Expression.Negate(delta_agg)), Expression.GreaterThan(delta_a, delta_agg));
-        //    var comboexp = Expression.Or(subcond1, subcond2);
+    //    //    var subcond1 = Expression.And(Expression.LessThan(delta_a, delta_agg), Expression.GreaterThan(delta_a, Expression.Negate(delta_agg)));
+    //    //    var subcond2 = Expression.And(Expression.LessThan(delta_a, Expression.Negate(delta_agg)), Expression.GreaterThan(delta_a, delta_agg));
+    //    //    var comboexp = Expression.Or(subcond1, subcond2);
 
-        //    Func<TSecond, TSecond, bool> aggfun = Expression.Lambda<Func<TSecond, TSecond, bool>>(comboexp, agg, a).Compile();
-        //    return source.Find(second, aggfun);
-        //}
-
-
-        //public static T FindNearestAbove<T>(this MathEnumerable<T> source, T value)
-        //{
-
-        //    var v0 = Expression.Constant(value);
-        //    ParameterExpression a = Expression.Parameter(typeof(T));
-
-        //    Func<T, bool> predicate = Expression.Lambda<Func<T, bool>>(Expression.GreaterThanOrEqual(a, v0), a).Compile();
-        //    MathEnumerable<T> candidates = source.Where(predicate);
-
-        //    ParameterExpression agg = Expression.Parameter(typeof(T));
-
-        //    var cond = Expression.And(Expression.LessThan(a, agg), Expression.GreaterThanOrEqual(a, v0));
-
-        //    Func<T, T, bool> aggfun = Expression.Lambda<Func<T, T, bool>>(cond, agg, a).Compile();
-        //    return candidates.Find(aggfun);
-        //}
-
-        //public static T FindNearestBelow<T>(this MathEnumerable<T> source, T value)
-        //{
-
-        //    var v0 = Expression.Constant(value);
-        //    ParameterExpression a = Expression.Parameter(typeof(T));
-
-        //    Func<T, bool> predicate = Expression.Lambda<Func<T, bool>>(Expression.LessThanOrEqual(a, v0), a).Compile();
-        //    MathEnumerable<T> candidates = source.Where(predicate);
-
-        //    ParameterExpression agg = Expression.Parameter(typeof(T));
-
-        //    var cond = Expression.And(Expression.LessThanOrEqual(a, v0), Expression.GreaterThan(a, agg));
-
-        //    Func<T, T, bool> aggfun = Expression.Lambda<Func<T, T, bool>>(cond, agg, a).Compile();
-        //    return candidates.Find(aggfun);
-        //}
+    //    //    Func<TSecond, TSecond, bool> aggfun = Expression.Lambda<Func<TSecond, TSecond, bool>>(comboexp, agg, a).Compile();
+    //    //    return source.Find(second, aggfun);
+    //    //}
 
 
-    }
+    //    //public static T FindNearestAbove<T>(this MathEnumerable<T> source, T value)
+    //    //{
+
+    //    //    var v0 = Expression.Constant(value);
+    //    //    ParameterExpression a = Expression.Parameter(typeof(T));
+
+    //    //    Func<T, bool> predicate = Expression.Lambda<Func<T, bool>>(Expression.GreaterThanOrEqual(a, v0), a).Compile();
+    //    //    MathEnumerable<T> candidates = source.Where(predicate);
+
+    //    //    ParameterExpression agg = Expression.Parameter(typeof(T));
+
+    //    //    var cond = Expression.And(Expression.LessThan(a, agg), Expression.GreaterThanOrEqual(a, v0));
+
+    //    //    Func<T, T, bool> aggfun = Expression.Lambda<Func<T, T, bool>>(cond, agg, a).Compile();
+    //    //    return candidates.Find(aggfun);
+    //    //}
+
+    //    //public static T FindNearestBelow<T>(this MathEnumerable<T> source, T value)
+    //    //{
+
+    //    //    var v0 = Expression.Constant(value);
+    //    //    ParameterExpression a = Expression.Parameter(typeof(T));
+
+    //    //    Func<T, bool> predicate = Expression.Lambda<Func<T, bool>>(Expression.LessThanOrEqual(a, v0), a).Compile();
+    //    //    MathEnumerable<T> candidates = source.Where(predicate);
+
+    //    //    ParameterExpression agg = Expression.Parameter(typeof(T));
+
+    //    //    var cond = Expression.And(Expression.LessThanOrEqual(a, v0), Expression.GreaterThan(a, agg));
+
+    //    //    Func<T, T, bool> aggfun = Expression.Lambda<Func<T, T, bool>>(cond, agg, a).Compile();
+    //    //    return candidates.Find(aggfun);
+    //    //}
+
+
+    ////}
 
 
 }
